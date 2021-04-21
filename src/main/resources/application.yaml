@@ -1,0 +1,48 @@
+debug: false
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    whitelabel:
+      enabled: false
+  servlet:
+    encoding:
+      charset: utf-8
+    context-path: /
+
+spring:
+  application:
+    name: JM Spring Boot Security Bootstrap
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/spring_security?verifyServerCertificate=false&useSSL=false&requireSSL=false&serverTimezone=Europe/Moscow&useLegacyDatetimeCode=false
+    username: root
+    password: root
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        hbm2ddl:
+          charset_name: UTF-8
+    open-in-view: false
+  devtools:
+    livereload:
+      enabled: true
+    add-properties: true
+  web:
+    locale: ru_RU
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+logging:
+  charset:
+    console: UTF-8
