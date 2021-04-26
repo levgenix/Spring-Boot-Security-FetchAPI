@@ -13,7 +13,7 @@ server:
 
 spring:
   application:
-    name: JM Spring Boot Security Bootstrap
+    name: JM Spring Boot Security with Fetch API
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/spring_security?verifyServerCertificate=false&useSSL=false&requireSSL=false&serverTimezone=Europe/Moscow&useLegacyDatetimeCode=false
