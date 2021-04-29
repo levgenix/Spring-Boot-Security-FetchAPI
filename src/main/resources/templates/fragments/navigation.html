@@ -1,0 +1,6 @@
+<div th:fragment="navigation (currentPage)" class="bg-white">
+  <nav class="btn-group-vertical mt-3 mb-3">
+    <a sec:authorize="hasRole('ADMIN')" type="button" class="btn pl-5 pr-5" th:classappend="${currentPage} == 'admin' ? btn-primary : btn-light" th:href="@{/admin}">Admin</a>
+    <a type="button" class="btn pl-5 pr-5" th:classappend="${currentPage} == 'user' ? btn-primary : btn-light" th:href="@{/user}">User</a>
+  </nav>
+</div>

@@ -1,6 +1,7 @@
 package ru.itsinfo.fetchapi.exception;
 
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +16,23 @@ public class ApiExceptionHandler {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @ExceptionHandler
+    /*@ExceptionHandler({UserNotFoundException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseStatusException handleUserNotFound(UserNotFoundException e) {
+    public Exception handleUserNotFound(Exception e) {
         return e;
+    }*/
+
+    @ExceptionHandler({UserNotFoundException.class, EmptyResultDataAccessException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleUserNotFound(Exception e) {
+        return e.getMessage();
     }
+
+    /*@ExceptionHandler({UserNotFoundException.class, EmptyResultDataAccessException.class})
+    //@ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleUserNotFound(Exception e) {
+        return new ResponseEntity<>(new UserValidationData(e.getUser(), e.getFieldErrors(), e.getMessage()), HttpStatus.NOT_FOUND);
+    }*/
 
     @ExceptionHandler
     public ResponseEntity<Object> handleUserValidation(UserValidationException e) {

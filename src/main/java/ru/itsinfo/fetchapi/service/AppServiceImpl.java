@@ -37,6 +37,11 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
+    public User getByEmail(String email) {
+        return (User) loadUserByUsername(email);
+    }
+
+    @Override
     public List<User> findAllUsers() {
         return userRepository.findAll(Sort.by(Sort.Direction.ASC, "firstName", "lastName"));
     }
@@ -89,6 +94,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public void deleteUser(Long id) {
+        // todo IllegalArgumentException
         userRepository.deleteById(id);
     }
 

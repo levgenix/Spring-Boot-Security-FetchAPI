@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface AppService extends UserDetailsService {
 
+    User getByEmail(String email);
+
     List<User> findAllUsers();
 
     User getOneUser(Long id);

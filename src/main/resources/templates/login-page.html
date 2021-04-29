@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:with="lang=${#locale.language}" th:lang="${lang}">
+
+<head th:replace="layouts/main :: htmlhead"/>
+<body>
+
+<div class="container">
+    <form class="form-signin" th:method="POST" th:action="@{/login}">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <p>
+            <label for="username" class="sr-only">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Email" autocomplete="username" required autofocus>
+        </p>
+        <p>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
+        </p>
+        <!--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>-->
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <div class="primary">&nbsp;</div>
+        <div class="alert alert-info" role="alert">
+            <p><b>Using</b><br/>
+            admin@mail.com : admin<br/></p>
+            <p><b>or</b><br/>
+            user@mail.com : user<br/></p>
+        </div>
+    </form>
+</div>
+
+<div th:replace="layouts/main :: footer"></div>
+</body>
+</html>

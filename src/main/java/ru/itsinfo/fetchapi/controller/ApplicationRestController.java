@@ -1,6 +1,9 @@
 package ru.itsinfo.fetchapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.itsinfo.fetchapi.model.User;
@@ -11,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationRestController {
     private final AppService appService;
 
@@ -19,12 +23,9 @@ public class ApplicationRestController {
         this.appService = appService;
     }
 
-    /*@PostMapping("/auth")
-    public ResponseEntity<Void> authenticate(@Valid @RequestBody LoginData loginData, BindingResult bindingResult) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }*/
-
-    @GetMapping
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+    //@GetMapping
+    @ResponseBody
     // todo CollectionModel List
     // TODO: В фоме заголовок https://habr.com/ru/post/500572/
     //GET http://localhost:8080/transactions/{userid}
@@ -40,6 +41,7 @@ public class ApplicationRestController {
     }*/
 
     @GetMapping("/{id}")
+//    @PreAuthorize("hasAuthority('user:get')")
     public User getOne(@PathVariable Long id) {
         return appService.getOneUser(id);
     }
@@ -57,6 +59,5 @@ public class ApplicationRestController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         appService.deleteUser(id);
-        // todo return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }
