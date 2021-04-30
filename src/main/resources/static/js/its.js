@@ -1,20 +1,8 @@
 $(document).ready(function () {
-    function loadUserProfileModalFormAndShow(id) {
-        console.log(id);
-    }
+    getAllUsers();
+});
 
-    function loadUserProfileModalFormForDeleteAndShow(id) {
-        fetch('/api/users/' + id, {method: 'DELETE'})
-            .then(function (response) {
-                if (response.status === 404) {
-                    response.text().then((value) => console.warn("Error message: " + value));
-                } else {
-                    $("#users-table-rows #userRow\\[" + id + "\\]").remove();
-                    console.info("User with id = " + id + " was deleted");
-                }
-            });
-    }
-
+function getAllUsers() {
     fetch('/api/users').then(function (response) {
         if (response.ok) {
             response.json().then(function (users) {
@@ -32,78 +20,62 @@ $(document).ready(function () {
                             .append($('<td>').text(user.roles.map(role => role.name)))
                             .append($('<td>').append($('<button class="btn btn-sm btn-info">')
                                 .click(() => {
-                                    loadUserProfileModalFormAndShow(user.id);
+                                    loadUserAndShow(user.id);
                                 }).text('Edit')))
                             .append($('<td>').append($('<button class="btn btn-sm btn-danger">')
                                 .click(() => {
-                                    loadUserProfileModalFormForDeleteAndShow(user.id);
+                                    loadUserAndShow(user.id);
                                 }).text('Delete')))
                         );
                     i++;
                 });
             });
         } else {
-            console.log('Network request for users.json failed with response ' + response.status + ': ' + response.statusText);
+            console.error('Network request for users.json failed with response ' + response.status + ': ' + response.statusText);
         }
     });
+}
 
-
-    $('.edit-button-tmp').on('click', function (event) {
-        event.preventDefault();
-        /*        $.get($(this).attr('href'), function (user, status) {
-                    $('#userprofile-form #id').val(user.id);
-                    $('#userprofile-form #firstName').val(user.firstName);
-                    $('#userprofile-form #lastName').val(user.lastName);
-                    $('#userprofile-form #age').val(user.age);
-                    $('#userprofile-form #email').val(user.email);
-                    $('#userprofile-form #password').val(user.password);
-                });*/
-        // $('#inputId').prop('readonly', true); когда делитим
-
-        $.get({
-            url: $(this).attr('href'),
-            dataType: "html"
-        }).done(function (html) {
-            $('#userprofile-modal').replaceWith(html);
-            showUserProfile();
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log('textStatus: ' + textStatus);
-            console.log('errorThrown: ' + errorThrown);
-            console.log('jqXHR: ' + jqXHR);
-        });
-    });
-
-    $('.edit-button').on('click', function (event) {
-        event.preventDefault();
-        $('#user-profile').modal("show").find('.modal-dialog').load($(this).attr('href'), function (response, status, xhr) {
-            if (xhr.status === 404) {
-                $(location).attr('href', '/admin');
+function loadUserAndShow(id) {
+    fetch('/api/users/' + id, {method: 'GET'})
+        .then(function (response) {
+                if (response.status !== 200) {
+                    console.error('Looks like there was a problem. Status Code: ' + response.status);
+                    if (response.status === 400) {
+                        response.text().then((value) => console.warn("Error message: " + value));
+                    }
+                    return;
+                }
+                response.json().then(function (user) {
+                    console.log('User: ' + user);
+                    const userForm = $('#user-profile');
+                    userForm.find('#id').val(id);
+                    userForm.find('#firstName').val(user.firstName);
+                    userForm.find('#lastName').val(user.lastName);
+                    userForm.find('#age').val(user.age);
+                    userForm.find('#email').val(user.email);
+                    userForm.find('#password-div').remove();
+                    userForm.find('.submit').text('Delete').addClass('btn-danger')
+                        .removeAttr('onClick')
+                        .attr('onClick', 'deleteUser(' + id + ');');
+                    userForm.modal();
+                });
             }
-            $('#user-profile .modal-header h3').text('Edit User');
-            let submit = $('#user-profile .modal-footer .submit');
-            submit.text('Save');
-            submit.addClass('btn-primary');
-            $('#user-profile #method').val("patch");
+        )
+        .catch(function (err) {
+            console.error('Fetch Error :-S', err);
         });
-    });
+}
 
-    $('.delete-button').on('click', function (event) {
-        event.preventDefault();
-        $('#user-profile').modal("show").find('.modal-dialog').load($(this).attr('href'), function (response, status, xhr) {
-            if (xhr.status === 404) {
-                $(location).attr('href', '/admin');
+function deleteUser(id) {
+    fetch('/api/users/' + id, {method: 'DELETE'})
+        .then(function (response) {
+            $('#user-profile').modal('hide');
+            if (response.status === 404 || response.status === 400) {
+                response.text().then((value) => console.warn("Error message: " + value));
+                return;
             }
-            $('#user-profile .modal-header h3').text('Delete User');
-            $('#user-profile #password-div').remove();
-            $("#user-profile #firstName").prop("readonly", true);
-            $("#user-profile #lastName").prop("readonly", true);
-            $("#user-profile #age").prop("readonly", true);
-            $("#user-profile #email").prop("readonly", true);
-            $("#user-profile #roles").prop("disabled", true);
-            let submit = $('#user-profile .modal-footer .submit');
-            submit.text('Delete');
-            submit.addClass('btn-danger');
-            $('#user-profile #method').val("delete");
+            $("#users-table-rows #userRow\\[" + id + "\\]").remove();
+            console.info("User with id = " + id + " was deleted");
         });
-    });
-});
+}

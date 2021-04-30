@@ -23,23 +23,28 @@ public class PreloadDatabase {
                                    UserRepository userRepository,
                                    PasswordEncoder passwordEncoder) {
         return args -> {
-            Role admin = new Role("ROLE_ADMIN");
-            Role user = new Role("ROLE_USER");
+            Role roleAdmin = new Role("ROLE_ADMIN");
+            Role roleUser = new Role("ROLE_USER");
 
-            log.info("Preloading " + roleRepository.save(admin));
-            log.info("Preloading " + roleRepository.save(user));
+            log.info("Preloading " + roleRepository.save(roleAdmin));
+            log.info("Preloading " + roleRepository.save(roleUser));
             log.info("Preloading " + roleRepository.save(new Role("ROLE_GUEST")));
 
             log.info("Preloading " + userRepository.save(new User("Василий", "Уткин", 49, "admin@mail.com",
                     passwordEncoder.encode("admin"),
                     new HashSet<>() {{
-                        add(admin);
-                        add(user);
+                        add(roleAdmin);
+                        add(roleUser);
                     }})));
             log.info("Preloading " + userRepository.save(new User("Дмитрий", "Губерниев", 46, "user@mail.com",
                     passwordEncoder.encode("user"),
                     new HashSet<>() {{
-                        add(user);
+                        add(roleUser);
+                    }})));
+            log.info("Preloading " + userRepository.save(new User("123", "456", 20, "guest@mail.com",
+                    passwordEncoder.encode("guest"),
+                    new HashSet<>() {{
+                        add(roleUser);
                     }})));
         };
     }

@@ -1,0 +1,50 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h3 class="modal-title">Delete user</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form role="form" id="userprofile-form">
+    <div class="modal-body">
+        <div class="container col-6 text-center">
+            <div class="form-group text-center">
+                <div>
+                    <label for="id">ID</label>
+                    <input type="text" class="form-control" name="id" id="id" readonly>
+                </div>
+                <div>
+                    <label for="firstName">First name</label>
+                    <input type="text" class="form-control" name="firstName" id="firstName">
+                </div>
+                <div>
+                    <label for="lastName">Last name</label>
+                    <input type="text" class="form-control" name="lastName" id="lastName">
+                </div>
+                <div>
+                    <label for="age">Age</label>
+                    <input type="number" class="form-control" name="age" id="age">
+                </div>
+                <div>
+                    <label for="email">E-mail</label>
+                    <input type="text" class="form-control" name="email" id="email" autocomplete="email">
+                </div>
+                <div id="password-div">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" autocomplete="current-password">
+                </div>
+                <div>
+                    <label for="roles">Role</label>
+                    <select multiple class="form-control" id="roles" name="roles">
+                        <option selected value="1">ROLE_ADMIN</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn submit">Action</button>
+    </div>
+    </form>
+</div>

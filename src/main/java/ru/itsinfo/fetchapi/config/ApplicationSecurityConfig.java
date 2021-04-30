@@ -55,8 +55,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 // Декларирует, что все запросы к любой конечной точке должны быть авторизованы, иначе они должны быть отклонены
                 .authorizeRequests()
                 .antMatchers("/", "/img/**", "/css/**", "/js/**", "/webjars/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/users/*").hasRole("USER") // todo only self??
-                .antMatchers("/api/users/**").hasRole("ADMIN")
+//                .antMatchers("/", "/img/**", "/css/**", "/js/**", "/webjars/**", "/api/users/**").permitAll()
+/*                .antMatchers(HttpMethod.GET, "/api/users/*").hasRole("USER") // todo only self??
+                .antMatchers("/api/users/**").hasRole("ADMIN")*/
                 .anyRequest().authenticated()
 //                // сообщает Spring, что не следует хранить информацию о сеансе для пользователей, поскольку это не нужно для API
 //                .and().sessionManagement().disable();

@@ -2,8 +2,6 @@ package ru.itsinfo.fetchapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.itsinfo.fetchapi.model.User;
@@ -24,7 +22,6 @@ public class ApplicationRestController {
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-    //@GetMapping
     @ResponseBody
     // todo CollectionModel List
     // TODO: В фоме заголовок https://habr.com/ru/post/500572/
@@ -36,9 +33,6 @@ public class ApplicationRestController {
     public List<User> findAll() {
         return appService.findAllUsers();
     }
-    /*public ResponseEntity<List<User>> all() {
-        return new ResponseEntity<>(appService.findAllUsers(, HttpStatus.OK);
-    }*/
 
     @GetMapping("/{id}")
 //    @PreAuthorize("hasAuthority('user:get')")
