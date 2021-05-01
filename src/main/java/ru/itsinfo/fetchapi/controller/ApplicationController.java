@@ -1,49 +1,27 @@
 package ru.itsinfo.fetchapi.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.CurrentSecurityContext;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import ru.itsinfo.fetchapi.model.User;
+import ru.itsinfo.fetchapi.service.AppService;
 
-import javax.security.auth.login.LoginException;
-import java.util.Objects;
-import java.util.Set;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class ApplicationController {
 
+    private final AppService appService;
+
+    @Autowired
+    public ApplicationController(AppService appService) {
+        this.appService = appService;
+    }
+
     @GetMapping({"", "/"})
-    public String main(@CurrentSecurityContext(expression = "authentication.principal") User principal,
-                       @CurrentSecurityContext(expression = "authentication") Authentication authentication,
-                       @Nullable Authentication auth) {
-//        System.out.println("principal "+ principal);
-//        System.out.println("authentication "+ authentication.getPrincipal());
-//        System.out.println("auth "+ (Objects.nonNull(auth) ? auth.getPrincipal() : "null"));
-        if (Objects.isNull(auth)) {
-            return "login-page";
-        }
-
-        User user = (User) auth.getPrincipal();
-//        System.out.println("user "+user);
-//        System.out.println("authorities "+user.getAuthorities());
-//        Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-//
-//        if (!roles.contains("ROLE_ADMIN") || !roles.contains("ROLE_USER")) {
-//
-//        System.out.println("admin: " + user.hasRole("ROLE_ADMIN"));
-//        System.out.println("user: " + user.hasRole("ROLE_USER"));
-
-        if (!(user.hasRole("ROLE_ADMIN") || user.hasRole("ROLE_USER"))) {
-            // todo <header th:replace="fragments/header :: header"/>
-            return "access-denied-page";
-        }
-
-        return "main-page";
+    public String main(Model model, HttpSession session, @Nullable Authentication auth) {
+        return appService.getPage(model, session, auth);
     }
 }

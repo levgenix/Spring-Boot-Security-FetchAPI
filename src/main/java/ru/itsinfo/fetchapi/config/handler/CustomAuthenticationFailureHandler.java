@@ -4,7 +4,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
-import javax.security.auth.login.LoginException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,20 +20,9 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
     public void onAuthenticationFailure(HttpServletRequest request,
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
-        System.out.println("FAILURE");
-        // Запишем, чтобы не вводить заново ошибочные данные формы
-        /*if (isAllowSessionCreation()) {
-            LoginException loginException = new LoginException(exception.getMessage());
-            request.getParameterMap().entrySet().forEach((entry) -> {
-                if (entry.getKey().equals("email")) {
-                    loginException.setEmail(entry.getValue()[0]);
-                } else if (entry.getKey().equals("password")) {
-                    loginException.setPassword(entry.getValue()[0]);
-                }
-            });
-
-            request.getSession().setAttribute("Authentication-Exception", loginException);
-        }*/
+        if (isAllowSessionCreation()) {
+            request.getSession().setAttribute("authenticationException", exception.getMessage());
+        }
 
         super.onAuthenticationFailure(request, response, exception);
     }

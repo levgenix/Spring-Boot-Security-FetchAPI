@@ -3,10 +3,13 @@ package ru.itsinfo.fetchapi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -18,8 +21,9 @@ import ru.itsinfo.fetchapi.model.User;
 import ru.itsinfo.fetchapi.repository.RoleRepository;
 import ru.itsinfo.fetchapi.repository.UserRepository;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AppServiceImpl implements AppService {
@@ -34,6 +38,28 @@ public class AppServiceImpl implements AppService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public String getPage(Model model, HttpSession session, @Nullable Authentication auth) {
+        if (Objects.isNull(auth)) {
+            model.addAttribute("authenticatedName", session.getAttribute("authenticatedName"));
+            session.removeAttribute("authenticatedName");
+
+            model.addAttribute("authenticationException", session.getAttribute("authenticationException"));
+            session.removeAttribute("authenticationException");
+
+            return "login-page";
+        }
+
+        User user = (User) auth.getPrincipal();
+
+        if (!(user.hasRole("ROLE_ADMIN") || user.hasRole("ROLE_USER"))) {
+            // todo <header th:replace="fragments/header :: header"/>
+            return "access-denied-page";
+        }
+
+        return "main-page";
     }
 
     @Override
