@@ -13,19 +13,26 @@ import org.springframework.validation.FieldError;
 import ru.itsinfo.fetchapi.exception.UserDataIntegrityViolationException;
 import ru.itsinfo.fetchapi.exception.UserNotFoundException;
 import ru.itsinfo.fetchapi.exception.UserValidationException;
+import ru.itsinfo.fetchapi.model.Role;
 import ru.itsinfo.fetchapi.model.User;
+import ru.itsinfo.fetchapi.repository.RoleRepository;
 import ru.itsinfo.fetchapi.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class AppServiceImpl implements AppService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AppServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AppServiceImpl(UserRepository userRepository,
+                          RoleRepository roleRepository,
+                          PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -34,11 +41,6 @@ public class AppServiceImpl implements AppService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("Username %s not found", email))
         );
-    }
-
-    @Override
-    public User getByEmail(String email) {
-        return (User) loadUserByUsername(email);
     }
 
     @Override
@@ -98,6 +100,11 @@ public class AppServiceImpl implements AppService {
         userRepository.deleteById(id);
     }
 
+    @Override
+    public Iterable<Role> findAllRoles() {
+        return roleRepository.findAll();
+    }
+
     /**
      * Удаляет ошибку, если у существующего User пустое поле password
      * @param bindingResult BeanPropertyBindingResult
@@ -118,4 +125,7 @@ public class AppServiceImpl implements AppService {
 
         return newBindingResult;
     }
+
+
+
 }

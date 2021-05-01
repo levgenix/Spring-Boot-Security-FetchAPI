@@ -22,20 +22,24 @@ public class ApplicationController {
     public String main(@CurrentSecurityContext(expression = "authentication.principal") User principal,
                        @CurrentSecurityContext(expression = "authentication") Authentication authentication,
                        @Nullable Authentication auth) {
-        System.out.println("principal "+ principal);
-        System.out.println("authentication "+ authentication.getPrincipal());
-        System.out.println("auth "+ (Objects.nonNull(auth) ? auth.getPrincipal() : "null"));
+//        System.out.println("principal "+ principal);
+//        System.out.println("authentication "+ authentication.getPrincipal());
+//        System.out.println("auth "+ (Objects.nonNull(auth) ? auth.getPrincipal() : "null"));
         if (Objects.isNull(auth)) {
             return "login-page";
         }
 
         User user = (User) auth.getPrincipal();
-        System.out.println("user "+user);
-        System.out.println("authorities "+user.getAuthorities());
+//        System.out.println("user "+user);
+//        System.out.println("authorities "+user.getAuthorities());
 //        Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-
+//
 //        if (!roles.contains("ROLE_ADMIN") || !roles.contains("ROLE_USER")) {
-        if (!user.hasRole("ROLE_ADMIN") || !user.hasRole("ROLE_USER")) {
+//
+//        System.out.println("admin: " + user.hasRole("ROLE_ADMIN"));
+//        System.out.println("user: " + user.hasRole("ROLE_USER"));
+
+        if (!(user.hasRole("ROLE_ADMIN") || user.hasRole("ROLE_USER"))) {
             // todo <header th:replace="fragments/header :: header"/>
             return "access-denied-page";
         }

@@ -55,7 +55,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 // Декларирует, что все запросы к любой конечной точке должны быть авторизованы, иначе они должны быть отклонены
                 .authorizeRequests()
                 .antMatchers("/", "/img/**", "/css/**", "/js/**", "/webjars/**").permitAll()
-//                .antMatchers("/", "/img/**", "/css/**", "/js/**", "/webjars/**", "/api/users/**").permitAll()
+                .antMatchers("/", "/img/**", "/css/**", "/js/**", "/webjars/**", "/api/users/**").permitAll()
 /*                .antMatchers(HttpMethod.GET, "/api/users/*").hasRole("USER") // todo only self??
                 .antMatchers("/api/users/**").hasRole("ADMIN")*/
                 .anyRequest().authenticated()
