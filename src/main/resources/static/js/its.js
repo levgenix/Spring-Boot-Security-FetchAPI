@@ -1,11 +1,32 @@
-$(document).ready(
-    () => {
-        getAllUsers();
-    }
-);
-
 const usersTableId = $('#users-table-rows');
 const userFormId = $('#user-profile');
+const userAddFormId = $('#user-addform');
+
+$('#nav-users_table-link').click(() => {
+    loadUsersTable();
+});
+$('#nav-user_form-link').click(() => {
+    loadAddForm();
+});
+userAddFormId.find(':submit').click(() => {
+    insertUser();
+});
+
+function loadUsersTable() {
+    $('#nav-users_table-link').addClass('active');
+    $('#nav-users_table').addClass('show').addClass('active');
+    $('#nav-user_form-link').removeClass('active');
+    $('#nav-user_form').removeClass('show').removeClass('active');
+    getAllUsers();
+}
+
+function loadAddForm() {
+    $('#nav-user_form-link').addClass('active');
+    $('#nav-user_form').addClass('show').addClass('active');
+    $('#nav-users_table-link').removeClass('active');
+    $('#nav-users_table').removeClass('show').removeClass('active');
+    loadUserForInsertForm();
+}
 
 function getAllUsers() {
     fetch('/api/users').then(function (response) {
@@ -13,7 +34,7 @@ function getAllUsers() {
             response.json().then(users => {
                 usersTableId.empty();
                 users.forEach(user => {
-                    appendUserRow(user);
+                    _appendUserRow(user);
                 });
             });
         } else {
@@ -22,7 +43,7 @@ function getAllUsers() {
     });
 }
 
-function appendUserRow(user) {
+function _appendUserRow(user) {
     usersTableId
         .append($('<tr class="border-top bg-light">').attr('id', 'userRow[' + user.id + ']')
             .append($('<td>').attr('id', 'userData[' + user.id + '][id]').text(user.id))
@@ -33,16 +54,16 @@ function appendUserRow(user) {
             .append($('<td>').attr('id', 'userData[' + user.id + '][roles]').text(user.roles.map(role => role.name)))
             .append($('<td>').append($('<button class="btn btn-sm btn-info">')
                 .click(() => {
-                    loadUserAndShow(user.id);
+                    loadUserAndShowModalForm(user.id);
                 }).text('Edit')))
             .append($('<td>').append($('<button class="btn btn-sm btn-danger">')
                 .click(() => {
-                    loadUserAndShow(user.id, false);
+                    loadUserAndShowModalForm(user.id, false);
                 }).text('Delete')))
         );
 }
 
-function eraseUserForm() {
+function _eraseUserModalForm() {
     userFormId.find('.invalid-feedback').remove();
     userFormId.find('#firstName').removeClass('is-invalid');
     userFormId.find('#email').removeClass('is-invalid');
@@ -50,71 +71,7 @@ function eraseUserForm() {
     userFormId.find('#age').removeClass('is-invalid');
 }
 
-function loadUserAndShow(id, editMode = true) {
-    eraseUserForm();
-
-    fetch('/api/users/' + id, {method: 'GET'})
-        .then(function (response) {
-                if (response.status !== 200) {
-                    console.error('Looks like there was a problem. Status Code: ' + response.status);
-                    if (response.status === 400) {
-                        response.text().then((value) => console.warn("Error message: " + value));
-                    }
-                    return;
-                }
-                response.json().then(function (user) {
-                    // console.log(user);
-                    userFormId.find('#id').val(id);
-                    userFormId.find('#firstName').val(user.firstName);
-                    userFormId.find('#lastName').val(user.lastName);
-                    userFormId.find('#age').val(user.age);
-                    userFormId.find('#email').val(user.email);
-                    userFormId.find('#password').val('');
-                    if (editMode) {
-                        userFormId.find('.modal-title').text('Edit user');
-                        userFormId.find('#password-div').show();
-                        userFormId.find('.submit').text('Edit').removeClass('btn-danger').addClass('btn-primary')
-                            .removeAttr('onClick')
-                            .attr('onClick', 'updateUser(' + id + ');');
-                        setReadonlyAttr(false);
-                    } else {
-                        userFormId.find('.modal-title').text('Delete user');
-                        userFormId.find('#password-div').hide();
-                        userFormId.find('.submit').text('Delete').removeClass('btn-primary').addClass('btn-danger')
-                            .removeAttr('onClick')
-                            .attr('onClick', 'deleteUser(' + id + ');');
-                        setReadonlyAttr();
-                    }
-
-                    fetch('/api/roles').then(function (response) {
-                        if (response.ok) {
-                            userFormId.find('#roles').empty();
-                            response.json().then(roleList => {
-                                roleList.forEach(role => {
-                                    userFormId.find('#roles')
-                                        .append($('<option>')
-                                            .prop('selected', user.roles.filter(e => e.id === role.id).length)
-                                            .val(role.id).text(role.name));
-
-                                    console.log(user.roles.filter(e => e.id === role.id).length);
-
-                                });
-                            });
-                        } else {
-                            console.error('Network request for roles.json failed with response ' + response.status + ': ' + response.statusText);
-                        }
-                    });
-
-                    userFormId.modal();
-                });
-            }
-        )
-        .catch(function (err) {
-            console.error('Fetch Error :-S', err);
-        });
-}
-
-function setReadonlyAttr(value = true) {
+function _setReadonlyAttr(value = true) {
     userFormId.find('#firstName').prop('readonly', value);
     userFormId.find('#lastName').prop('readonly', value);
     userFormId.find('#age').prop('readonly', value);
@@ -124,9 +81,9 @@ function setReadonlyAttr(value = true) {
 }
 
 function updateUser(id) {
-    eraseUserForm();
+    _eraseUserModalForm();
 
-    const headers = new Headers();
+    let headers = new Headers();
     headers.append('Content-Type', 'application/json; charset=utf-8');
     let user = {
         'id': parseInt(userFormId.find('#id').val()),
@@ -137,7 +94,7 @@ function updateUser(id) {
         'password': userFormId.find('#password').val(),
         'roles': userFormId.find('#roles').val().map(roleId => parseInt(roleId))
     };
-    const request = new Request('/api/users/', {
+    let request = new Request('/api/users/', {
         method: 'PUT',
         headers: headers,
         body: JSON.stringify(user)
@@ -160,6 +117,7 @@ function updateUser(id) {
                             .addClass('is-invalid')
                             .parent().append($('<div class="invalid-feedback">').text(error.defaultMessage));
                     });
+                    console.warn('Error: ' + userData.message);
                     return false;
                 }
                 if (response.status === 400) {
@@ -185,25 +143,141 @@ function updateUser(id) {
         });
 }
 
-function insertUser(id) {
-    fetch('/api/users/' + id, {method: 'POST'})
-        .then(function (response) {
-            if (response.status === 404 || response.status === 400) {
-                response.text().then((value) => console.warn("Error message: " + value));
-                userFormId.modal('hide');
-                return;
-            }
+function loadUserAndShowModalForm(id, editMode = true) {
+    _eraseUserModalForm();
 
+    fetch('/api/users/' + id, {method: 'GET'})
+        .then(function (response) {
+                if (response.status !== 200) {
+                    console.error('Looks like there was a problem. Status Code: ' + response.status);
+                    if (response.status === 400) {
+                        response.text().then((value) => console.warn("Error message: " + value));
+                    }
+                    return;
+                }
+                response.json().then(function (user) {
+                    // console.log(user);
+                    userFormId.find('#id').val(id);
+                    userFormId.find('#firstName').val(user.firstName);
+                    userFormId.find('#lastName').val(user.lastName);
+                    userFormId.find('#age').val(user.age);
+                    userFormId.find('#email').val(user.email);
+                    userFormId.find('#password').val('');
+                    if (editMode) {
+                        userFormId.find('.modal-title').text('Edit user');
+                        userFormId.find('#password-div').show();
+                        userFormId.find('.submit').text('Edit').removeClass('btn-danger').addClass('btn-primary')
+                            .removeAttr('onClick')
+                            .attr('onClick', 'updateUser(' + id + ');');
+                        _setReadonlyAttr(false);
+                    } else {
+                        userFormId.find('.modal-title').text('Delete user');
+                        userFormId.find('#password-div').hide();
+                        userFormId.find('.submit').text('Delete').removeClass('btn-primary').addClass('btn-danger')
+                            .removeAttr('onClick')
+                            .attr('onClick', 'deleteUser(' + id + ');');
+                        _setReadonlyAttr();
+                    }
+
+                    fetch('/api/roles').then(function (response) {
+                        if (response.ok) {
+                            userFormId.find('#roles').empty();
+                            response.json().then(roleList => {
+                                roleList.forEach(role => {
+                                    userFormId.find('#roles')
+                                        .append($('<option>')
+                                            .prop('selected', user.roles.filter(e => e.id === role.id).length)
+                                            .val(role.id).text(role.name));
+                                });
+                            });
+                        } else {
+                            console.error('Network request for roles.json failed with response ' + response.status + ': ' + response.statusText);
+                        }
+                    });
+
+                    userFormId.modal();
+                });
+            }
+        )
+        .catch(function (err) {
+            console.error('Fetch Error :-S', err);
+        });
+}
+
+function _eraseUserAddForm() {
+    userAddFormId.find('.invalid-feedback').remove();
+    userAddFormId.find('#newfirstName').removeClass('is-invalid');
+    userAddFormId.find('#newage').removeClass('is-invalid');
+    userAddFormId.find('#newemail').removeClass('is-invalid');
+    userAddFormId.find('#newpassword').removeClass('is-invalid');
+}
+
+function loadUserForInsertForm() {
+    _eraseUserAddForm();
+    userAddFormId.find('#newfirstName').val('');
+    userAddFormId.find('#newlastName').val('');
+    userAddFormId.find('#newage').val('0');
+    userAddFormId.find('#newemail').val('');
+    userAddFormId.find('#newpassword').val('');
+
+    fetch('/api/roles').then(function (response) {
+        if (response.ok) {
+            userAddFormId.find('#newroles').empty();
+            response.json().then(roleList => {
+                roleList.forEach(role => {
+                    userAddFormId.find('#newroles')
+                        .append($('<option>').val(role.id).text(role.name));
+                });
+            });
+        } else {
+            console.error('Network request for roles.json failed with response ' + response.status + ': ' + response.statusText);
+        }
+    });
+}
+
+function insertUser() {
+    _eraseUserAddForm();
+
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json; charset=utf-8');
+    let user = {
+        'firstName': userAddFormId.find('#newfirstName').val(),
+        'lastName': userAddFormId.find('#newlastName').val(),
+        'age': userAddFormId.find('#newage').val(),
+        'email': userAddFormId.find('#newemail').val(),
+        'password': userAddFormId.find('#newpassword').val(),
+        'roles': userAddFormId.find('#newroles').val().map(roleId => parseInt(roleId))
+    };
+    let request = new Request('/api/users/', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(user)
+    });
+
+    fetch(request)
+        .then(function (response) {
             response.json().then(function (userData) {
+                console.log(userData);
+
                 if (response.status === 409) {
-                    const user = userData.user;
-                    const fieldErrors = userData.fieldErrors;
-                    // todo
+                    userData.fieldErrors.forEach(error => {
+                        userAddFormId.find('#new' + error.field)
+                            .addClass('is-invalid')
+                            .parent().append($('<div class="invalid-feedback">').text(error.defaultMessage));
+                    });
+                    console.warn('Error: ' + userData.message);
+                    return false;
+                }
+                if (response.status === 400) {
+                    userAddFormId.find('#newemail')
+                        .addClass('is-invalid')
+                        .parent().append($('<div class="invalid-feedback">').text('E-mail must be unique'));
+                    console.warn("Error message: " + userData.message);
+                    return false;
                 }
 
-                userFormId.modal('hide');
-                appendUserRow(userData);
-                console.info("User with id = " + id + " was inserted");
+                loadUsersTable();
+                console.info("User with id = " + userData.id + " was inserted");
             });
         });
 }
@@ -220,3 +294,7 @@ function deleteUser(id) {
             console.info("User with id = " + id + " was deleted");
         });
 }
+
+$(document).ready(
+    () => getAllUsers()
+);
