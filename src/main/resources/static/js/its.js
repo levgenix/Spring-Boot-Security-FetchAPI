@@ -20,6 +20,21 @@ function loadUsersTable() {
     getAllUsers();
 }
 
+function initNavigation() {
+    $('#admin-area-tab').click(() => {
+        $('#admin-area-tab').addClass('active').removeClass('btn-light').addClass('btn-primary').prop('aria-selected', true);
+        $('#admin-area').addClass('active');
+        $('#user-area-tab').removeClass('active').removeClass('btn-primary').addClass('btn-light').prop('aria-selected', false);
+        $('#user-area').removeClass('active');
+    });
+    $('#user-area-tab').click(() => {
+        $('#user-area-tab').addClass('active').removeClass('btn-light').addClass('btn-primary').prop('aria-selected', true);
+        $('#user-area').addClass('active');
+        $('#admin-area-tab').removeClass('active').removeClass('btn-primary').addClass('btn-light').prop('aria-selected', false);
+        $('#admin-area').removeClass('active');
+    });
+}
+
 function loadAddForm() {
     $('#nav-user_form-link').addClass('active');
     $('#nav-user_form').addClass('show').addClass('active');
@@ -296,5 +311,8 @@ function deleteUser(id) {
 }
 
 $(document).ready(
-    () => getAllUsers()
+    () => {
+        getAllUsers();
+        initNavigation();
+    }
 );

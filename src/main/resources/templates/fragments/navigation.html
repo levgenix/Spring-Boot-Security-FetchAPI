@@ -1,6 +1,8 @@
-<div th:fragment="navigation (currentPage)" class="bg-white">
-  <nav class="btn-group-vertical mt-3 mb-3">
-    <a sec:authorize="hasRole('ADMIN')" type="button" class="btn pl-5 pr-5" th:classappend="${currentPage} == 'admin' ? btn-primary : btn-light" th:href="@{/admin}">Admin</a>
-    <a type="button" class="btn pl-5 pr-5" th:classappend="${currentPage} == 'user' ? btn-primary : btn-light" th:href="@{/user}">User</a>
-  </nav>
-</div>
+<ul th:fragment="nav" class="nav flex-column nav-tabs bg-white" id="myTab" role="tablist">
+  <li class="nav-item mt-3" role="presentation">
+    <a class="nav-link btn btn-primary pl-5 pr-5 active" id="admin-area-tab" data-toggle="tab" href="#admin-area" role="tab" aria-controls="admin-area" aria-selected="true">Admin</a>
+  </li>
+  <li class="nav-item mb-3" role="presentation">
+    <a class="nav-link btn btn-light pl-5 pr-5" id="user-area-tab" data-toggle="tab" href="#user-area" role="tab" aria-controls="user-area" aria-selected="false">User</a>
+  </li>
+</ul>

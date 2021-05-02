@@ -1,0 +1,31 @@
+<div class="tab-pane active" id="admin-area" role="tabpanel" aria-labelledby="admin-area-tab">
+    <h1>Admin panel</h1>
+    <div class="container-fluid">
+        <nav>
+            <div class="nav nav-tabs border-bottom-0" id="nav-tab" role="tablist">
+                <a class="nav-link active" id="nav-users_table-link" data-toggle="tab" href="#nav-users_table"
+                   role="tab" aria-controls="nav-users_table">Users table</a>
+                <a class="nav-link" id="nav-user_form-link" data-toggle="tab" href="#nav-user_form"
+                   role="tab" aria-controls="nav-user_form">New user</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-users_table" role="tabpanel">
+                <div class="row border">
+                    <h5 class="m-2">All users</h5>
+                </div>
+                <div class="row border bg-white pb-2">
+                    <div th:replace="fragments/users-table"/>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-user_form" role="tabpanel">
+                <div class="row border">
+                    <h5 class="m-2">Add new user</h5>
+                </div>
+                <div class="row border bg-white pb-2">
+                    <div th:replace="fragments/user-addform"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
