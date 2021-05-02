@@ -53,13 +53,18 @@ public class AppServiceImpl implements AppService {
         }
 
         User user = (User) auth.getPrincipal();
+        model.addAttribute("user", user);
 
-        if (!(user.hasRole("ROLE_ADMIN") || user.hasRole("ROLE_USER"))) {
-            // todo <header th:replace="fragments/header :: header"/>
-            return "access-denied-page";
+        if (user.hasRole("ROLE_ADMIN")) {
+            return "main-page";
         }
 
-        return "main-page";
+        if (user.hasRole("ROLE_USER")) {
+            return "user-page";
+        }
+
+        return "access-denied-page";
+
     }
 
     @Override
@@ -122,7 +127,6 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public void deleteUser(Long id) {
-        // todo IllegalArgumentException
         userRepository.deleteById(id);
     }
 

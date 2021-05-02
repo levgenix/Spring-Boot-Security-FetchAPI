@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ru.itsinfo.fetchapi.config.handler.CustomAccessDeniedHandler;
 import ru.itsinfo.fetchapi.config.handler.CustomAuthenticationFailureHandler;
 import ru.itsinfo.fetchapi.config.handler.CustomAuthenticationSuccessHandler;
 import ru.itsinfo.fetchapi.config.handler.CustomUrlLogoutSuccessHandler;
@@ -30,17 +31,22 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     // класс, в котором описана логика при удачной авторизации
     private final CustomUrlLogoutSuccessHandler urlLogoutSuccessHandler;
 
+    // класс, в котором описана логика при отказе в доступе
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+
     @Autowired
     public ApplicationSecurityConfig(AppService appService,
                                      PasswordEncoder passwordEncoder,
                                      CustomAuthenticationSuccessHandler authenticationSuccessHandler,
                                      CustomAuthenticationFailureHandler authenticationFailureHandler,
-                                     CustomUrlLogoutSuccessHandler urlLogoutSuccessHandler) {
+                                     CustomUrlLogoutSuccessHandler urlLogoutSuccessHandler,
+                                     CustomAccessDeniedHandler accessDeniedHandler) {
         this.appService = appService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.authenticationFailureHandler = authenticationFailureHandler;
         this.urlLogoutSuccessHandler = urlLogoutSuccessHandler;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Override
@@ -50,19 +56,17 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
+        http.csrf().disable()
                 // Декларирует, что все запросы к любой конечной точке должны быть авторизованы, иначе они должны быть отклонены
                 .authorizeRequests()
                 .antMatchers("/", "/img/**", "/css/**", "/js/**", "/webjars/**").permitAll()
-                .antMatchers("/", "/img/**", "/css/**", "/js/**", "/webjars/**", "/api/users/**").permitAll()
-/*                .antMatchers(HttpMethod.GET, "/api/users/*").hasRole("USER") // todo only self??
-                .antMatchers("/api/users/**").hasRole("ADMIN")*/
-                .anyRequest().authenticated();
-//                // сообщает Spring, что не следует хранить информацию о сеансе для пользователей, поскольку это не нужно для API
-//                .and().sessionManagement().disable();
-        // сообщает Spring, чтобы он ожидал базовую HTTP аутентификацию
-//                .and().httpBasic();
+//                .antMatchers(HttpMethod.GET, "/api/users/*").hasRole("USER")
+                .antMatchers("/api/users/*", "/api/roles").hasRole("ADMIN")
+                .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+//                .and().sessionManagement().disable(); // сообщает Spring, что не следует хранить информацию о сеансе для пользователей, поскольку это не нужно для API
+//                .and().httpBasic(); // сообщает Spring, чтобы он ожидал базовую HTTP аутентификацию
 
         http.formLogin()
                 .loginPage("/") // указываем страницу с формой логина

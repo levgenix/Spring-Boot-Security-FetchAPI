@@ -4,8 +4,12 @@
 <head th:replace="layouts/main :: htmlhead"/>
 <body>
 
-<div class="container">
-    <h2 class="form-signin-heading">Access denied!</h2>
+<header th:replace="fragments/header :: header"/>
+
+<div class="container-fluid d-flex flex-row vh-100 p-0">
+    <div class="tab-content flex-grow-1 bg-light p-3">
+        <h1>Access denied!</h1>
+    </div>
 </div>
 
 <div th:replace="layouts/main :: footer"/>

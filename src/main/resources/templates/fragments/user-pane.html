@@ -1,3 +1,32 @@
-<div class="tab-pane" id="user-area" role="tabpanel" aria-labelledby="user-area-tab">
+<div th:fragment="pane (isActive)" class="tab-pane" th:classappend="${isActive} ? 'active' : ''" id="user-area" role="tabpanel" aria-labelledby="user-area-tab">
   <h1>User information-page</h1>
+  <div class="container-fluid">
+    <div class="row border">
+      <h5 class="m-2">About user</h5>
+    </div>
+    <div class="row border bg-white pb-2">
+      <table class="table table-borderless m-3">
+        <thead>
+        <tr class="border-top">
+          <th scope="col">First name</th>
+          <th scope="col">Last name</th>
+          <th scope="col">Age</th>
+          <th scope="col">E-mail</th>
+          <th scope="col">Roles</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="border-top bg-light" th:object="${user}">
+          <td th:text="*{firstName}"/>
+          <td th:text="*{lastName}"/>
+          <td th:text="*{age}"/>
+          <td th:text="*{email}"/>
+          <td><th:block th:each="role : *{getRoles()}">
+            <span th:text="${role.name}"/>
+          </th:block></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

@@ -9,12 +9,15 @@
 
 <div class="container-fluid d-flex flex-row vh-100 p-0">
 
-    <div th:replace="fragments/navigation :: nav"/>
+    <ul class="nav flex-column nav-tabs bg-white" id="myTab" role="tablist">
+        <li class="nav-item mt-3 mb-3" role="presentation">
+            <a class="nav-link btn btn-primary pl-5 pr-5 active" id="user-area-tab" data-toggle="tab" href="#user-area" role="tab" aria-controls="user-area" aria-selected="true">User</a>
+        </li>
+    </ul>
 
     <div class="tab-content flex-grow-1 bg-light p-3">
 
-        <div th:replace="fragments/admin-pane"/>
-        <div th:replace="fragments/user-pane :: pane (isActive=false)"/>
+        <div th:replace="fragments/user-pane :: pane (isActive=true)"/>
 
     </div>
 </div>

@@ -24,4 +24,9 @@ public class ApplicationController {
     public String main(Model model, HttpSession session, @Nullable Authentication auth) {
         return appService.getPage(model, session, auth);
     }
+
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "access-denied-page";
+    }
 }

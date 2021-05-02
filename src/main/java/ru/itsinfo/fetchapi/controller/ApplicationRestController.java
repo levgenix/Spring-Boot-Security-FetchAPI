@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationRestController {
     private final AppService appService;
 
@@ -24,19 +23,11 @@ public class ApplicationRestController {
 
     @GetMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    // todo CollectionModel List
-    // TODO: В фоме заголовок https://habr.com/ru/post/500572/
-    //GET http://localhost:8080/transactions/{userid}
-    //Accept: application/json
-    // или
-    //POST ...
-    //Content-Type: application/json; charset=UTF-8
     public List<User> findAll() {
         return appService.findAllUsers();
     }
 
     @GetMapping("/users/{id}")
-//    @PreAuthorize("hasAuthority('user:get')")
     public User getOne(@PathVariable Long id) {
         return appService.getOneUser(id);
     }
@@ -44,7 +35,6 @@ public class ApplicationRestController {
     @PostMapping("/users")
     public User insert(@Valid @RequestBody User user, BindingResult bindingResult) {
         return appService.insertUser(user, bindingResult);
-        //return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @RequestMapping(
