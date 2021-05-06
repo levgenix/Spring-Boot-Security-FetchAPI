@@ -1,7 +1,9 @@
 package ru.itsinfo.fetchapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.itsinfo.fetchapi.model.Role;
@@ -22,9 +24,8 @@ public class ApplicationRestController {
     }
 
     @GetMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseBody
-    public List<User> findAll() {
-        return appService.findAllUsers();
+    public ResponseEntity<List<User>> findAll() {
+        return new ResponseEntity<>(appService.findAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/users/{id}")
@@ -33,18 +34,13 @@ public class ApplicationRestController {
     }
 
     @PostMapping("/users")
-    public User insert(@Valid @RequestBody User user, BindingResult bindingResult) {
-        return appService.insertUser(user, bindingResult);
+    public ResponseEntity<User> insert(@Valid @RequestBody User user, BindingResult bindingResult) {
+        return new ResponseEntity<>(appService.insertUser(user, bindingResult), HttpStatus.OK);
     }
 
-    @RequestMapping(
-            value = "/users",
-            produces = {MediaType.APPLICATION_JSON_VALUE},
-            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE},
-            method = RequestMethod.PUT)
-    public User update(@Valid @RequestBody User user, BindingResult bindingResult) {
-        System.out.println("USER: "+user);
-        return appService.updateUser(user, bindingResult);
+    @PutMapping("/users")
+    public ResponseEntity<User> update(@Valid @RequestBody User user, BindingResult bindingResult) {
+        return new ResponseEntity<>(appService.updateUser(user, bindingResult), HttpStatus.OK);
     }
 
     @DeleteMapping("/users/{id}")
@@ -53,8 +49,7 @@ public class ApplicationRestController {
     }
 
     @GetMapping(value = "/roles", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseBody
-    public Iterable<Role> findAllRoles() {
-        return appService.findAllRoles();
+    public ResponseEntity<Iterable<Role>> findAllRoles() {
+        return new ResponseEntity<>(appService.findAllRoles(), HttpStatus.OK);
     }
 }
