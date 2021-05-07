@@ -25,31 +25,32 @@ public class ApplicationRestController {
 
     @GetMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<List<User>> findAll() {
-        return new ResponseEntity<>(appService.findAllUsers(), HttpStatus.OK);
+        return ResponseEntity.ok(appService.findAllUsers());
     }
 
     @GetMapping("/users/{id}")
-    public User getOne(@PathVariable Long id) {
-        return appService.getOneUser(id);
+    public ResponseEntity<User> getOne(@PathVariable Long id) {
+        return ResponseEntity.ok(appService.getOneUser(id));
     }
 
     @PostMapping("/users")
     public ResponseEntity<User> insert(@Valid @RequestBody User user, BindingResult bindingResult) {
-        return new ResponseEntity<>(appService.insertUser(user, bindingResult), HttpStatus.OK);
+        return ResponseEntity.ok(appService.insertUser(user, bindingResult));
     }
 
     @PutMapping("/users")
     public ResponseEntity<User> update(@Valid @RequestBody User user, BindingResult bindingResult) {
-        return new ResponseEntity<>(appService.updateUser(user, bindingResult), HttpStatus.OK);
+        return ResponseEntity.ok(appService.updateUser(user, bindingResult));
     }
 
     @DeleteMapping("/users/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         appService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/roles", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Iterable<Role>> findAllRoles() {
-        return new ResponseEntity<>(appService.findAllRoles(), HttpStatus.OK);
+        return ResponseEntity.ok(appService.findAllRoles());
     }
 }
