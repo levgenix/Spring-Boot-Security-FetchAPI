@@ -2,7 +2,6 @@ package ru.itsinfo.fetchapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ public class ApplicationRestController {
         this.appService = appService;
     }
 
-    @GetMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/users")
     public ResponseEntity<List<User>> findAll() {
         return ResponseEntity.ok(appService.findAllUsers());
     }
@@ -49,7 +48,7 @@ public class ApplicationRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value = "/roles", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/roles")
     public ResponseEntity<Iterable<Role>> findAllRoles() {
         return ResponseEntity.ok(appService.findAllRoles());
     }
